@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Data to JSON</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Inserisci i tuoi dati</h1>
+        <form id="dataForm">
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="surname">Cognome:</label>
+            <input type="text" id="surname" name="surname" required>
+
+            <label for="birthplace">Luogo di nascita:</label>
+            <input type="text" id="birthplace" name="birthplace" required>
+
+            <button type="submit">Salva</button>
+
+            <button type="button" onclick="generatePassword()">GENERA PASSWORD</button>
+
+            <label for="password">App Password Generata:</label>
+            <div class="password-container">
+                <input type="password" id="password" name="password" readonly>
+                <button type="button" onclick="togglePasswordVisibility('password')">👁</button>
+            </div>
+
+            <button type="button" onclick="toggleAccessFields()">ACCESSO</button>
+
+            <div id="accessFields" style="display: none;">
+                <label for="appPassword">Inserisci la App Password Generata:</label>
+                <div class="password-container">
+                    <input type="password" id="appPassword" name="appPassword" >
+                    <button type="button" onclick="togglePasswordVisibility('appPassword')">👁</button>
+                </div>
+
+                <label for="protectedPassword">Inserisci la Password Protetta:</label>
+                <div class="password-container">
+                    <input type="password" id="protectedPassword" name="protectedPassword">
+                    <button type="button" onclick="togglePasswordVisibility('protectedPassword')">👁</button>
+                </div>
+
+                <button type="button" onclick="verifyAccess()">VERIFICA E ACCESSO</button>
+            </div>
+
+            <label for="privateAccessPassword">Inserisci la Password Privata:</label>
+            <input type="password" id="privateAccessPassword" name="privateAccessPassword" >
+
+            <button type="button" onclick="privateAccess()">ACCESSO PRIVATO</button>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+
+</body>
+</html>

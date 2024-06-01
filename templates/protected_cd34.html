@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schermata Protetta di Alex 86134</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            margin-top: 50px; /* Questa riga è stata spostata qui */
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: calc(100% - 50px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        #joke {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+
+        #stopwatch {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #time {
+            font-size: 48px;
+            margin-top: 20px;
+        }
+
+        button {
+            font-size: 24px;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .password-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .password-container button {
+            padding: 8px;
+            margin-left: 10px;
+            background-color: #ddd;
+            border: none;
+            cursor: pointer;
+        }
+
+        #dataDisplay {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+            var recognition;
+            var gender = '';  // Variabile per memorizzare il genere
+
+            var voiceAssistantButton = document.getElementById('voiceAssistantButton');
+            var voiceCommandInput = document.getElementById('voiceCommand');
+
+            voiceAssistantButton.onclick = function() {
+                console.log('Pulsante cliccato, inizio registrazione...'); // Log per il debugging
+                startRecording();
+            };
+
+            // Funzione per aprire un sito web
+            function openWebsite(url) {
+                window.open(url, '_blank');
+            }
+
+            // Esempio di utilizzo
+            socket.on('open_website', function(data) {
+                var url = data.url;
+                openWebsite(url);
+            });
+
+            function startRecording() {
+                if (recognition) {
+                    recognition.stop(); // Ferma qualsiasi riconoscimento precedente
+                }
+
+                recognition = new webkitSpeechRecognition();
+                recognition.lang = 'it-IT';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+
+                // Messaggio per indicare che la registrazione è in corso
+                console.log('Inizio della registrazione della voce. Parla dopo il segnale sonoro.');
+
+                recognition.onstart = function() {
+                    console.log('Riconoscimento vocale iniziato');
+                };
+
+                recognition.onresult = function(event) {
+                    var transcript = event.results[0][0].transcript.toLowerCase();
+                    console.log('Risultato del riconoscimento:', transcript);
+                    voiceCommandInput.value = transcript;
+                    processCommand(transcript); // Elabora il comando direttamente in JavaScript
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Errore nel riconoscimento vocale:', event.error);
+                };
+
+                recognition.onend = function() {
+                    console.log('Riconoscimento vocale terminato'); , '_blank');
+                        }, 2000); // Aggiunto un breve ritardo per permettere la lettura del messaggio
+                    } else {
+                        speak('Non ho capito l\'URL del sito. Per favore, riprova.');
+                    }
+                } else if (command.includes('gioco')) {
+                    var sites = ['www.gioco.it/', 'www.gioco.it/', 'www.gioco.it/'];
+                    var randomSite = sites[Math.floor(Math.random() * sites.length)];
+                    speak('Sto aprendo un sito a caso.');
+                    setTimeout(function() {
+                        window.open('http://' + randomSite, '_blank');
+                    }, 2000); // Aggiunto un breve ritardo per permettere la lettura del messaggio
+                } else if (command.includes('riproduci')) {
+                    var songName = extractSongName(command);
+                    if (songName) {
+                        var searchQuery = encodeURIComponent(songName);
+                        var youtubeUrl = `https://www.youtube.com/results?search_query=${searchQuery}`;
+                        speak('Sto cercando su YouTube ' + songName);
+                        setTimeout(function() {
+                            window.open(youtubeUrl, '_blank');
+                        }, 2000); // Aggiunto un breve ritardo per permettere la lettura del messaggio
+                    } else {
+                        speak('Non ho capito il nome della canzone. Per favore, riprova.');
+                    }
+                } else {
+                    speak('Comando non riconosciuto. Per favore, riprova.');
+                }
+            }
+
+            function waitForResponse() {
+                setTimeout(function() {
+                    startRecording();  // Riavvia il riconoscimento dopo una breve pausa
+                }, 1000);
+            }
+
+            function waitForTimeInput() {
+                setTimeout(function() {
+                    startRecording();  // Riavvia il riconoscimento dopo una breve pausa
+                }, 1000);
+            }
+
+            function showCalculator() {
+                var calculatorHtml = `
+                    <div id="calculatorContainer" style="position:fixed; top:10%; left:10%; width:80%; height:80%; background-color:white; border:1px solid black; padding:20px; z-index:1000;">
+                        <h2>Calcolatrice</h2>
+                        <input type="text" id="expression" placeholder="Inserisci espressione" style="width:80%; padding:10px; font-size:16px;">
+                        <button onclick="calculateResult()" style="padding:10px; font-size:16px;">Calcola</button>
+                        <div id="result" style="margin-top:20px; font-size:20px;"></div>
+                        <button onclick="closeCalculator()" style="padding:10px; font-size:16px; margin-top:20px;">Chiudi</button>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', calculatorHtml);
+            }
+
+            function calculateResult() {
+                var expression = document.getElementById('expression').value;
+                try {
+                    var result = eval(expression);
+                    document.getElementById('result').innerText = 'Risultato: ' + result;
+                } catch (e) {
+                    document.getElementById('result').innerText = 'Errore: Espressione non valida';
+                }
+            }
+
+            function closeCalculator() {
+                var calculatorContainer = document.getElementById('calculatorContainer');
+                if (calculatorContainer) {
+                    calculatorContainer.remove();
+                }
+            }
+
+            function speak(text) {
+                var speech = new SpeechSynthesisUtterance(text);
+                speech.lang = 'it-IT';
+                window.speechSynthesis.speak(speech);
+            }
+
+            socket.on('audio_processing_result', function(data) {
+                console.log('Risultato dell\'elaborazione audio:', data);
+                // Gestisci il risultato dell'elaborazione audio qui
+            });
+
+            // Funzioni per il timer
+            function startTimer(duration) {
+                var timerContainer = document.createElement('div');
+                timerContainer.id = 'timerContainer';
+                timerContainer.style = 'position:fixed; top:10%; right:10%; background-color:white; border:1px solid black; padding:20px; z-index:1000;';
+                timerContainer.innerHTML = '<h2>Timer</h2><div id="timerDisplay" style="font-size:24px;"></div>';
+                document.body.appendChild(timerContainer);
+
+                var time = duration, minutes, seconds;
+                var timerInterval = setInterval(function () {
+                    minutes = parseInt(time / 60, 10);
+                    seconds = parseInt(time % 60, 10);
+
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                    document.getElementById('timerDisplay').textContent = minutes + ":" + seconds;
+
+                    if (--time < 0) {
+                        clearInterval(timerInterval);
+                        speak('Il tempo è scaduto.');
+                        alert('Timer scaduto!');
+                        closeTimer();
+                    }
+                }, 1000);
+            }
+
+            function closeTimer() {
+                var timerContainer = document.getElementById('timerContainer');
+                if (timerContainer) {
+                    timerContainer.remove();
+                }
+            }
+
+            // Lista delle barzellette
+            const jokes = [
+                "Perché il computer è andato dal dottore? Perché aveva un virus!",
+                "Qual è il colmo per un elettricista? Non fare mai scintille!",
+                "Cosa fa una mucca quando ascolta musica? Suona i bassi!",
+                "Perché le arance non usano il telefono? Perché non riescono a trovare il pulsante giusto!",
+                "Perché il libro di matematica era triste? Perché aveva troppi problemi!"
+            ];
+
+            // Funzione per raccontare una barzelletta
+            function tellJoke() {
+                const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+                document.getElementById('joke').innerText = randomJoke;
+                const utterance = new SpeechSynthesisUtterance(randomJoke);
+                utterance.lang = "it-IT";
+                speechSynthesis.speak(utterance);
+            }
+
+            // Funzione per mostrare il cronometro
+            function showStopwatch() {
+                document.getElementById('stopwatch').style.display = 'block';
+            }
+
+            // Funzionalità cronometro
+            let timer;
+            let running = false;
+
+            function startStopwatch() {
+                if (!running) {
+                    running = true;
+                    timer = setInterval(function() {
+                        let timeElement = document.getElementById('time');
+                        let currentTime = parseInt(timeElement.innerText);
+                        timeElement.innerText = currentTime + 1;
+                    }, 1000);
+                }
+            }
+
+            function stopStopwatch() {
+                running = false;
+                clearInterval(timer);
+            }
+
+            function resetStopwatch() {
+                running = false;
+                clearInterval(timer);
+                document.getElementById('time').innerText = "0";
+            }
+
+            document.getElementById('start-stopwatch').addEventListener('click', startStopwatch);
+            document.getElementById('stop-stopwatch').addEventListener('click', stopStopwatch);
+            document.getElementById('reset-stopwatch').addEventListener
+            function toggleData() {
+                const generatedPasswordInput = document.getElementById('generatedPassword').value;
+                const dataDisplay = document.getElementById('dataDisplay');
+            
+                if (generatedPasswordInput) {
+                    fetch('/getData', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ password: generatedPasswordInput })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            document.getElementById('nameDisplay').innerText = data.name;
+                            document.getElementById('surnameDisplay').innerText = data.surname;
+                            document.getElementById('birthplaceDisplay').innerText = data.birthplace;
+                            dataDisplay.style.display = dataDisplay.style.display === 'none' ? 'block' : 'none';
+                        } else {
+                            alert('Password generata non valida.');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+                } else {
+                    alert('Inserisci una password generata.');
+                }
+            }
+            
+        // Il tuo codice JavaScript qui
+    </script>
+</head>
+<body>
+    <label for="generatedPassword">Inserisci Password Generata:</label>
+    <input type="password" id="generatedPassword" name="generatedPassword" required>
+    <button type="button" onclick="toggleData()">Visualizza Dati</button>
+    <button id="voiceAssistantButton">Attiva Assistente Vocale</button>
+    <input type="text" id="voiceCommand" placeholder="Comando vocale riconosciuto">
+    <div id="stopwatch" style="display: none;">
+        <h2>Cronometro</h2>
+        <button id="start-stopwatch">Avvia</button>
+        <button id="stop-stopwatch">Ferma</button>
+        <button id="reset-stopwatch">Resetta</button>
+        <div id="time">0</div>
+    </div>
+    <div id="joke"></div>
+
+    <!-- Altri contenuti della tua pagina qui -->
+
+</body>
+</html>
